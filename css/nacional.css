@@ -1,0 +1,294 @@
+@CHARSET "UTF-8";
+
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+
+strong {
+	font-weight: bold;
+}
+
+body {
+	line-height: 1;
+}
+
+ol, ul {
+	list-style: none;
+}
+
+blockquote, q {
+	quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+body {
+	font-family: sans-serif;
+	font-size: 12px;
+}
+	
+#container {
+	width: 960px;
+	clear: both;
+	margin: 0px auto;
+	margin-bottom: 200px;
+	padding: 0;
+	overflow: hidden;
+}
+	
+#menuLogo {
+	margin-right: 10px;
+	display: block;
+	clear: left;
+	float: left;
+	padding-top: 5px;
+	height: 35px;
+	width: 181px;
+}
+
+#menuLogoDerecha {
+	display: block;
+	clear: right;
+	float: right;
+	padding-top: 5px;
+}
+	
+#menu {
+	clear:both;
+	float:left;
+	width: 100%;		
+	background-color: #0099cc;
+	z-index: 10;
+	overflow: hidden;
+}
+	
+#menuContainer {
+	width: 960px;
+	clear: none;
+	margin: 0px auto;
+}
+	
+#menu a {
+	display: block;
+	clear: none;
+	float: left;
+	padding: 15px;
+	margin: 0 1px 0 1px;
+	color: white;
+	font-weight: bold;
+	text-decoration: none;
+}
+	
+#menu a:hover {
+	background-color: #069;
+}
+	
+.menu-active {
+	background-color: #069;
+}
+	
+.error {
+	clear: both;
+	text-align: center;
+	width: 600px;
+	margin: 0px auto;
+	margin-top: 50px;
+	font-size: 16px;
+	padding: 6px;
+	line-height: 100%;
+}
+	
+#formImportantDisclaimer {
+	background-color: #FC9;
+	font-weight: bold;
+	font-size: 14px;
+	color: black;
+	margin: 20px;
+	padding: 12px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+	
+#formDisclaimer {
+	width: 700px;
+	border: 1px solid #CCC;
+	background-color: #EEE;
+	overflow: auto;
+	padding: 5px;
+	margin: 0px auto;
+	margin-top: 15px;
+	margin-bottom: 15px;
+	line-height: 150%;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+	
+.index {
+	clear: both;
+	width: 400px;
+	text-align: left;
+	font-size:14px;
+	margin: 0px auto;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	padding: 10px;
+}
+	
+.centered {
+	display: block;
+	margin: 0px auto;		
+}
+	
+#actualNacionalLogo {
+	display: block;		
+	clear: both;
+	width: auto;
+	height: auto;
+	margin: 0px auto;
+	margin-top: 40px;
+}
+
+#form input {
+	width: 280px;
+	height: 20px;
+	padding: 1px;
+	margin: 0px;
+	overflow: auto;
+}
+	
+#form label {
+	width: 160px;
+	float: left;
+	text-align: right;
+	display: block;
+	padding: 3px 7px 0 0;
+}
+	
+#form select {
+	width: 280px;
+	float: left;
+	display: block;
+	padding: 2px;
+	margin: 4px 0 4px 0;
+}
+
+#form textarea {
+	width: 280px;
+	float: left;
+	display: block;
+	padding: 2px;
+	margin: 4px 0 4px 0;
+}
+	
+label.nonWritable {
+	display: block;
+	clear: none;
+	float: left;
+	padding: 1px;
+	margin: 2px;
+	text-align: left;
+	width: auto;
+	background-color: #FFF;
+}
+	
+#form {
+	clear: both;
+	margin: 0px auto;
+	margin-top: 40px;
+	margin-bottom: 40px;
+	width: 520px;
+	padding: 10px;
+	overflow: auto;
+	background-color: #BDB;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+} 
+	
+#form p {
+	clear: both;
+	float: left;
+	margin: 4px;
+	padding: 4px;
+	border-bottom: 1px solid #000;
+	width: 500px;
+}
+	
+#formButton { 
+	display: block;
+	clear: both;
+	width: 90px;
+	height: 35px;
+	color: white;
+	background-color: green;
+	font-size: 20px;
+	font-weight: bold;
+	margin: 0px auto;
+	margin-top: 30px;
+	overflow: auto;
+}
+	
+input.formCheckBox {
+	margin-left: 206px;
+}
+	
+.formError {
+	clear:both;
+	float:left;		
+	padding:3px;
+	margin:20px 8px 20px 8px;
+	background-color: red;
+	color: white;
+	font-size:16px;
+	font-weight: bold;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+.blue {
+	color: blue;
+}
+
+.bold {
+	font-weight: bold;
+}
