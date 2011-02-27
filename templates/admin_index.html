@@ -1,16 +1,16 @@
 
-<div style='clear:both;padding:10px;width:350px;margin:0px auto;'>
+<div id='adminIndexContainer'>
 	<h3>admin zone</h3>
-	<div style='clear:both;padding:15px 10px;overflow:auto;background-color:#CCF;-moz-border-radius:4px;border-radius:4px;-webkit-border-radius:4px;'>
+	<div id='adminIndex'>
 		<form action='/nacional/?menu=admin' method='post'>
 			<input type='hidden' name='adminForm' value='yes' />
-			<p><label style='width:150px;float:left;text-align:right;display:block;padding:3px 4px 0 0;'>Primer día de la nacional</label> <input name='firstDay' type='text' value='{{config.firstDay}}' /></p>
-			<p><label style='width:150px;float:left;text-align:right;display:block;padding:3px 4px 0 0;'>Fecha límite inscripción</label> <input name='inscriptionLimitDate' type='text' value='{{config.inscriptionLimitDate}}' /></p>
-			<p><label style='width:150px;float:left;text-align:right;display:block;padding:3px 4px 0 0;'>Cuenta del banco</label> <input type='text' name='bankAccount' value='{{config.bankAccount}}' /></p>
-			<p><label style='width:150px;float:left;text-align:right;display:block;padding:3px 4px 0 0;'>Máximas inscripciones</label> <input type='text' name='maxInscriptions' value='{{config.maxInscriptions}}' /></p>
-			<p><label style='width:150px;float:left;text-align:right;display:block;padding:3px 4px 0 0;'>Precio inscripción</label> <input type='text' name='price' value='{{config.price}}' /></p>
-			<p><label style='width:150px;float:left;text-align:right;display:block;padding:3px 4px 0 0;'>Precio inscrip. in situ</label> <input type='text' name='inSituPrice' value='{{config.inSituPrice}}' /></p>
-			<p><label style='width:150px;float:left;text-align:right;display:block;padding:3px 4px 0 0;'>Precio camiseta extra</label> <input type='text' name='extraTShirtPrice' value='{{config.extraTShirtPrice}}' /></p>
+			<p><label>Primer día de la nacional</label> <input name='firstDay' type='text' value='{{config.firstDay}}' /></p>
+			<p><label>Fecha límite inscripción</label> <input name='inscriptionLimitDate' type='text' value='{{config.inscriptionLimitDate}}' /></p>
+			<p><label>Cuenta del banco</label> <input type='text' name='bankAccount' value='{{config.bankAccount}}' /></p>
+			<p><label>Máximas inscripciones</label> <input type='text' name='maxInscriptions' value='{{config.maxInscriptions}}' /></p>
+			<p><label>Precio inscripción</label> <input type='text' name='price' value='{{config.price}}' /></p>
+			<p><label>Precio inscrip. in situ</label> <input type='text' name='inSituPrice' value='{{config.inSituPrice}}' /></p>
+			<p><label>Precio camiseta extra</label> <input type='text' name='extraTShirtPrice' value='{{config.extraTShirtPrice}}' /></p>
 			<p><input name='extraTShirts' value='1' type='checkbox' {% if config.extraTShirts == "1" %}checked='checked' {% endif %}/> Permitida petición de camisetas extras</p>
 			<p><input name='inscriptionsOpened' value='1' type='checkbox' {% if config.inscriptionsOpened == "1" %}checked='checked' {% endif %}/> Inscripciones abiertas</p><br />
 			<input type='submit' value='Grabar' />
