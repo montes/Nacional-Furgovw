@@ -57,15 +57,14 @@ if (!isset($_GET['menu']) || ($_GET['menu'] == '')) {
 } 
 	
 // If the user is a moderator check if we must do any moderator task
-if (Nacional::getModerator()) {
+// or if he wants to see admin menu
+if ($moderator) {
 	$msg = Nacional::doModeratorTasks();
 	if ($msg !== false) {
 		$vars = compact('msg');
-		Haanga::Load('error.html', $vars);
-		return;
-	}
-	elseif ($_GET['menu'] == 'admin') {
-	$config = Nacional::getConfig();
+		Haanga::Load('error.html', $vars);		
+	} elseif ($_GET['menu'] == 'admin') {
+		$config = Nacional::getConfig();
 		$allInscriptionsArray = Nacional::getAllInscriptions();
 		$vars = compact('config', 'allInscriptionsArray');
 		Haanga::Load('admin_index.html', $vars);
@@ -75,7 +74,7 @@ if (Nacional::getModerator()) {
 	
 // Are we at the inscriptions menu?
 if ($_GET['menu'] == 'apuntarse') {
-
+	
 	$vars = compact('moderator', 'year', 'title');
 	Haanga::Load('inscriptions.html', $vars);
 	
@@ -87,17 +86,18 @@ if ($_GET['menu'] == 'apuntarse') {
 		$error = Nacional::getError();
 		$vars = compact('error');
 		Haanga::Load('error.html', $vars);
-		if (!Nacional::getModerator()) {
-			return;
-		}
 	}
 	
 	$config = Nacional::getConfig();
 	$data = Nacional::getInscriptionData();
-	if ($config['inscriptionsOpened'] == '1' 
-		&& !is_numeric($data['numpago']) 
+	
+	//Last checks before show inscription's form
+	if (($config['inscriptionsOpened'] == '1' 
+		&& (!is_numeric($data['numpago'])) 
 		&& $_GET['menu'] != 'admin'
-		&& (!Nacional::getModerator() && Nacional::getError() === false)) {
+		&& ($moderator || !isset($error)))
+		||
+		($moderator && is_numeric($_GET['edit']))) {
 	
 		$dates = array();		
 		for ($cont = 0; $cont < 3; $cont++) {

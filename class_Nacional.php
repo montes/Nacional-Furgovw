@@ -59,7 +59,6 @@ class Nacional
 		$result = $db->query("SELECT * FROM fnacional_config WHERE id = 0");
 		
 		if ($db->affected_rows > 0 && is_array($userInfo)) {
-			
 			self::$_config = $result->fetch_array(MYSQLI_ASSOC);
 			
 			self::$_year = date('Y');
@@ -75,30 +74,28 @@ class Nacional
 					self::saveConfig();
 				}
 			}
-						
-			return true;
-			
+		} else {
+			throw new Exception('Error loading Nacional Config');
+		}		
+		return true;
+	}
+	
+	public static function getTitle()
+	{
+		if (self::$_title != '') {
+			return self::$_title;
 		} else {
 			return false;
 		}
 	}
 	
-	public static function getTitle()
-	{
-		if (self::$_title != '')
-		{
-			return self::$_title;
-		}
-		else
-			return false;
-	}
-	
 	public static function getInscriptionsOpened()
 	{
-		if (is_array(self::$_config))
+		if (is_array(self::$_config)) {
 			return self::$_config['inscriptionsOpened'];
-		else
+		} else {
 			return false;
+		}
 	}
 	
 	public static function getInscriptionData()
@@ -110,17 +107,15 @@ class Nacional
 	{
 		$result = self::$_db->query('SELECT * FROM fnacional WHERE year = "'.self::$_year.'"');
 		
-		if (self::$_db->affected_rows > 0)
-		{
+		if (self::$_db->affected_rows > 0) {
 			$inscriptionsArray = array();
-			while($row = $result->fetch_array(MYSQLI_ASSOC))
-			{
+			while($row = $result->fetch_array(MYSQLI_ASSOC)) {
 				$inscriptionsArray[] = $row;
 			}
 			return $inscriptionsArray;
-		}
-		else
+		} else {
 			false;
+		}
 	}
 
 	public static function getTShirtsSizes()
@@ -201,66 +196,60 @@ class Nacional
 	{
 		self::loadInscriptionData();
 		
-		if (self::$_userInfo['is_guest'] || !is_array(self::$_userInfo))
-		{			
+		if (self::$_userInfo['is_guest'] || !is_array(self::$_userInfo)) {			
 			return "Debes estar registrado en el foro para poder apuntarte a la concentración nacional:<br /><br />".
 				"<a href='http://www.furgovw.org/index.php?action=register'>Registrarse en el foro</a>";
-		}
-		elseif (self::$_config['inscriptionsOpened'] == '0')
-		{
+		} elseif (self::$_config['inscriptionsOpened'] == '0') {
 			return "Lo sentimos, aún no se han abierto las inscripciones para la nacional.";
-		}
-		elseif ( 
-				(strtotime(date("Y-m-d")) > strtotime(self::$_config['inscriptionLimitDate'])) &&
+		} elseif ( 
+				(time() > strtotime(self::$_config['inscriptionLimitDate'])) &&
 				(self::$_inscriptionData === false)
 				)
 		{
 			return "Lo sentimos, se ha pasado la fecha límite para la inscripción.";
 		}
-		elseif (self::$_inscriptionData === false)
-		{
+		elseif (self::$_inscriptionData === false) {
 			$result = self::$_db->query('SELECT COUNT(*) as total FROM fnacional WHERE year = "'.self::$_year.'"');
 			$obj = $result->fetch_object();
-			if ($obj->total > self::$_config['maxInscriptions'])
-			{
+			if ($obj->total > self::$_config['maxInscriptions']) {
 				return 'Lo sentimos, se ha sobrepasado el límite de inscripciones, no quedan plazas.';
 			}
 		}
-		elseif (is_array(self::$_inscriptionData) && is_numeric(self::$_inscriptionData['numpago']))
-		{
+		elseif (is_array(self::$_inscriptionData) && is_numeric(self::$_inscriptionData['numpago'])) {
 			if (self::$_inscriptionData['pagado'] == '1') {
 				return 'Ya has realizado la inscripción, tu número de inscripción es <strong>'.self::$_inscriptionData['numpago'].
 					'</strong><br /><br />Tu pago ha sido confirmado.';
 			} else {
 				return 'Ya has realizado la inscripción, tu número de inscripción es <strong>'.self::$_inscriptionData['numpago'].
-					'</strong><br /><br />Debes ingresar '.self::$_inscriptionData['price'].'€ en la cuenta del foro:<br /><br />'.
+					'</strong><br /><br />Debes ingresar '.self::$_inscriptionData['price'].'€ en la cuenta del foro<br />'.
+					'-INDICANDO TU NÚMERO DE INSCRIPCIÓN <strong>'.self::$_inscriptionData['numpago'].'</strong>-<br /><br />'.
 					'CLUB CAMPER FURGOVW<br />La Caixa<br />'.self::$_config['bankAccount'].'<br /><br />
 					Aún no hemos confirmado tu pago, si ya has pagado ten paciencia, tardaremos unos días en confirmarlo.';
-			} 
+			}
 		}
-		
+				
 		return false;
 	}
 	
 	public static function doModeratorTasks()
 	{
-		if (!self::$_moderator) return false;
+		if (!self::$_moderator) {
+			return false;
+		}
 		
-		if (is_numeric($_GET['pagado']))
-		{
+		if (is_numeric($_GET['pagado'])) {
 			self::$_db->query('UPDATE fnacional SET pagado=1 WHERE id = '.$_GET['pagado']);
 			return 'ID '.$_GET['pagado'].' marcado como pagado.';
-		}
-		elseif (is_numeric($_GET['reenviar']))
-		{
+		} elseif (is_numeric($_GET['reenviar'])) {
 			self::loadInscriptionData($_GET['reenviar']);
-			if (self::sendConfirmationEmail())
+			if (self::sendConfirmationEmail()) {
 				return "Mensaje enviado a $emailTo";
-			else
-				return "Error al enviar mensaje a $emailTo";
-		}
-		else
+			} else {
+				throw new Exception("Error al enviar mensaje a $emailTo");
+			}
+		} else {
 			return false;
+		}
 	}
 	
 	public static function saveInscriptionDataFromPost()
@@ -368,8 +357,7 @@ class Nacional
 		if (self::$_db->affected_rows > 0) {
 			$obj = $result->fetch_object();
 			$newId = $obj->numpago + 1;
-		}
-		else {
+		} else {
 			$newId = 1;
 		}
 		
@@ -457,7 +445,9 @@ class Nacional
 	
 	private static function sendConfirmationEmail()
 	{
-		if (!is_array(self::$_userInfo) || self::$_userInfo['is_guest'] || !is_array(self::$_inscriptionData)) return false;
+		if (!is_array(self::$_userInfo) || self::$_userInfo['is_guest'] || !is_array(self::$_inscriptionData)) {
+			return false;
+		}
 		
 		$config = self::$_config;
 		$data = self::$_inscriptionData;
@@ -481,8 +471,7 @@ class Nacional
 			'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40,
 			'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1);
  
-		foreach ($lookup as $roman => $value) 
-   		{
+		foreach ($lookup as $roman => $value) {
 			$matches = intval($actualNacional / $value);				
 			$romanNacional .= str_repeat($roman, $matches);				
 			$actualNacional = $actualNacional % $value;
@@ -493,35 +482,34 @@ class Nacional
 
 	private static function checkIfIsModerator()
 	{
-		if ( 
-			(in_array("1", self::$_userInfo['groups'])) || 
+		if ((in_array("1", self::$_userInfo['groups'])) || 
 			(in_array("9", self::$_userInfo['groups'])) || 
-			(in_array("2", self::$_userInfo['groups'])) 
-			)
-		{
+			(in_array("2", self::$_userInfo['groups']))) {
+			
 			self::$_moderator = true;
-		}	
-		else
-		{
+		} else {
 			self::$_moderator = false;
 		}
 	}
 	
 	private static function loadInscriptionData($id = false)
 	{
-		if (!is_array(self::$_userInfo) || self::$_userInfo['is_guest']) return false;
+		if (!is_array(self::$_userInfo) || self::$_userInfo['is_guest']) {
+			return false;
+		}
 		
-		if (is_numeric($id))
+		if (is_numeric($id)) {
 			$result = self::$_db->query('SELECT * FROM fnacional WHERE id = '.$id.' LIMIT 1');
-		else
+		} else {
 			$result = self::$_db->query('SELECT * FROM fnacional WHERE idmember = '.
 										self::$_userInfo['id'].' AND year = "'.self::$_year.'" LIMIT 1');
+		}
 			
-		if (self::$_db->affected_rows > 0)
-		{
+		if (self::$_db->affected_rows > 0) {
 			self::$_inscriptionData = $result->fetch_array(MYSQLI_ASSOC);
-			if (self::$_inscriptionData['price'] == '0') 
+			if (self::$_inscriptionData['price'] == '0') { 
 				self::calcInscriptionPrice();
+			}
 		}
 		elseif (self::$_inscriptionData['error'] == '' && !is_numeric(self::$_inscriptionData['numpago'])) {
 			self::$_inscriptionData = array();
