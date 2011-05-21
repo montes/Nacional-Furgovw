@@ -297,6 +297,7 @@ input.formCheckBox {
 
 #adminIndexContainer {
 	clear: both;
+	overflow: hidden;
 	padding: 10px;
 	width: 390px;
 	margin: 0px auto;
@@ -304,8 +305,9 @@ input.formCheckBox {
 
 #adminIndex {
 	clear:both;
+	float: left;
 	padding:15px 10px;
-	overflow:auto;
+	overflow:hidden;
 	background-color:#CCF;
 	-moz-border-radius:4px;
 	border-radius:4px;
@@ -322,4 +324,59 @@ input.formCheckBox {
 
 #adminIndex p {
 	margin: 4px;
+}
+
+#inscriptionsContainer {
+	clear: both;
+	overflow: auto;
+	width: 900px;
+	padding: 5px;
+	margin: 0px auto;
+	margin-top: 40px;
+}
+
+.inscriptionRow {
+	width: 884px;
+	display: block;
+	clear: both;
+	float: left;
+	padding: 4px;
+	margin: 4px;
+	background-color: #CCC;
+	border:1px solid #000;
+}
+
+.inscriptionRow2 {
+	width: 884px;
+	display: block;
+	clear: both;
+	float: left;
+	padding: 4px;
+	margin: 4px;
+	background-color: #0CC;
+	border:1px solid #000;
+}
+
+.inscription {
+	display: block;
+	overflow: hidden;
+	clear: none;
+	float: left;
+	padding: 2px;
+	margin: 2px;
+	border: 1px solid;
+	background-color: white;
+}
+
+#history {
+	clear: both;
+	margin: 0px auto;
+	margin-top: 30px;
+	width: 500px;
+	text-align: center;
+}
+
+#history li {	
+	padding: 4px;
+	margin: 4px;	
 }

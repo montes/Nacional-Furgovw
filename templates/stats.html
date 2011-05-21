@@ -1,0 +1,60 @@
+<div style='width:600px;clear:both;margin:0px auto;margin-top:20px;'>
+	<h1 style='font-weight:bold;font-size:20px;display:block;clear:both;float:left;'>Total Vehículos Inscritos: {{allInscriptionsArray|length}}</h1>
+
+	{% if statistics %}
+	<div style='width:500px;margin:10px;padding:5px;clear:both;float:left;'>
+
+	<p><strong>Adultos:</strong> {{statistics.adults}}</p><br />
+
+	<p><strong>Niños:</strong> {{statistics.childs}}</p><br />
+
+	<p><strong>Países:</strong> 
+	{% for country in statistics.countries %}
+	{{country}} 
+	{% endfor %}
+	</p><br />
+
+	<p><strong>Vehículos por comunidad:</strong> 
+	<ul>
+	{% for community, total in statistics.communities %}
+	<li>{{community}} - {{total}}</li>
+	{% endfor %}
+	</ul>
+	</p><br />
+
+	<p><strong>Vehículos por provincia:</strong> 
+	<ul>
+	{% for province, total in statistics.provinces %}
+	<li>{{province}} - {{total}}</li>
+	{% endfor %}
+	</ul>
+	</p><br />
+
+	<p><strong>Vehículos por año de fabricación:</strong> 
+	<ul>
+	{% for vehicle, total in statistics.vehicleYears %}
+	<li>{{vehicle}} - {{total}}</li>
+	{% endfor %}
+	</ul>
+	</p><br />
+
+	<p><strong>Vehículos por marca:</strong> 
+	<ul>
+	{% for vehicle, total in statistics.vehicleBrands %}
+	<li>{{vehicle}} - {{total}}</li>
+	{% endfor %}
+	</ul>
+	</p><br />
+	
+	</div>
+	{% endif %}
+	
+	{% if allInscriptionsArray %}
+	{% for inscription in allInscriptionsArray %}
+	<div style='width:300px;margin:3px;clear:left;float:left;{% if inscription.pagado == '1' %}background-color:green;{% else %}background-color:#FCC;{% endif %}' class='inscription' id='priceInscription{{inscription.id}}'>
+		<div class='inscription'>{{inscription.numpago}}</div>
+		<div style='margin:2px;padding:3px 3px 3px 8px;float:left;overflow:hidden;'><strong>{{inscription.nick}}</strong>{% if inscription.pagado == '1' %} -pagado-{% endif %}</div>
+	</div>
+	{% endfor %}
+	{% endif %}
+</div>

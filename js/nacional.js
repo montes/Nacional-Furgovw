@@ -23,3 +23,21 @@ $(document).ready(function() {
 	$('#menuButtonsContainer').width(totalWidth);
 	$('#menuButtonsContainer').css('margin', '0 auto');
 });
+
+
+function checkPayment(id)
+{
+	//alert(id);
+	$.get('/nacional/ajax/payment/'+id, function(data) {
+		  if (data == 'ok1') {
+			  $('#priceInscription'+id).html("<a href='#' onclick='return checkPayment("+id+");'>Marcar NO pagado</a>");
+			  $('#priceInscription'+id).css('background-color', 'green');
+		  }
+		  else if (data == 'ok0') {
+			  $('#priceInscription'+id).html("<a href='#' onclick='return checkPayment("+id+");'>Marcar pagado</a>");
+			  $('#priceInscription'+id).css('background-color', 'white');
+		  }
+	});
+	
+	return false;
+}

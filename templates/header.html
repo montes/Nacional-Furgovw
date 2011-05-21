@@ -10,13 +10,14 @@
 	<title>{% if title %}{{title}}{% else %}Concentración nacional de furgonetas camper furgovw.org{% endif %}</title>
 </head>
 <body>
-
+{% if config.menu2 != 'sinmenu' %}
 <div id='menu'>
 	<div id='menuContainer'>
 		<img id='menuLogo' src='/nacional/img/logo_menu.png' />
 		<div id='menuButtonsContainer'>
 			<a href='http://www.furgovw.org/nacional/'>Inicio</a>
 			<a href='http://www.furgovw.org/nacional/historia/'>Historia</a>
+			<a href='http://www.furgovw.org/nacional/estadisticas/'>Estadísticas</a>
 			<a href='http://www.furgovw.org/nacional/apuntarse/'>Apuntarse</a>
 			<a href='http://www.furgovw.org'>Volver al foro</a>
 	
@@ -27,6 +28,6 @@
 		<img id='menuLogoDerecha' src='/nacional/img/logo_menu_derecha.png' />
 	</div>
 </div>
-
+{% endif %}
 <div id='container'>
 
