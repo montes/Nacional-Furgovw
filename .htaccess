@@ -1,0 +1,11 @@
+Options +FollowSymlinks
+RewriteEngine on
+
+ServerSignature Off
+
+#NACIONAL
+RewriteRule ^nacional/([^/\.]+)/?$ /nacional/?menu=$1 [L]
+RewriteRule ^nacional/ajax/([^/\.]+)/([^/\.]+)/?$ /nacional/?ajax=$1&op=$2 [L]
+RewriteRule ^nacional/edita/([^/\.]+)/?$ /nacional/?edita=$1 [L]
+RewriteRule ^nacional/([^/\.]+)/([^/\.]+)/?$ /nacional/?menu=$1&menu2=$2 [L]
+
