@@ -7,10 +7,10 @@
 	<link rel="stylesheet" type="text/css" href="/nacional/css/nacional.css" />	
 	<script type="text/javascript" src="/clases/js/jquery-1.3.2.min.js"></script>
 	<script type="text/javascript" src="/nacional/js/nacional.js"></script>
-	<title>{% if title %}{{title}}{% else %}Concentración nacional de furgonetas camper furgovw.org{% endif %}</title>
+	<title><?php if ($title): ?><?=$title?><?php else: ?>Concentración nacional de furgonetas camper furgovw.org<?php endif; ?></title>
 </head>
 <body>
-{% if config.menu2 != 'sinmenu' %}
+<?php if ($config['menu2'] != 'sinmenu'): ?>
 <div id='menu'>
 	<div id='menuContainer'>
 		<img id='menuLogo' src='/nacional/img/logo_menu.png' />
@@ -21,13 +21,13 @@
 			<a href='http://www.furgovw.org/nacional/apuntarse/'>Apuntarse</a>
 			<a href='http://www.furgovw.org'>Volver al foro</a>
 	
-			{% if moderator %}
-			<a href='http://www.furgovw.org/nacional/admin/'>Menú admin</a>
-			{% endif %}
+			<? if ($moderator): ?>
+				<a href='http://www.furgovw.org/nacional/admin/'>Menú admin</a>
+			<?php endif; ?>
 		</div>
 		<img id='menuLogoDerecha' src='/nacional/img/logo_menu_derecha.png' />
 	</div>
 </div>
-{% endif %}
+<?php endif; ?>
 <div id='container'>
 

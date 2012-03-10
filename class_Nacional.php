@@ -61,7 +61,9 @@ class Nacional
             if (!self::$_userInfo['is_guest']) {
                 self::checkIfIsModerator();
                 self::loadInscriptionData();
-                if (self::$_moderator && $_POST['adminForm'] == 'yes') {
+
+                if (self::$_moderator && isset($_POST['adminForm']) && $_POST['adminForm'] == 'yes') {
+
                     self::loadConfigFromPost();
                     self::saveConfig();
                 }
@@ -374,7 +376,7 @@ class Nacional
                 "<a href='http://www.furgovw.org/index.php?action=register'>".
                 "Registrarse en el foro</a>";
         } elseif (self::$_config['inscriptionsOpened'] == '0') {
-            return "Lo sentimos, aún no se han abierto las".
+            return "Lo sentimos, aún no se han abierto las ".
                 "inscripciones para la nacional.";
         } elseif ((time() > strtotime(self::$_config['inscriptionLimitDate'])) 
             &&(self::$_inscriptionData === false)
@@ -389,9 +391,9 @@ class Nacional
                 return 'Lo sentimos, se ha sobrepasado el límite de'.
                     ' inscripciones, no quedan plazas.';
             }
-        } elseif (is_array(self::$_inscriptionData) 
-            && is_numeric(self::$_inscriptionData['numpago'])
-        ) {
+        } elseif (is_array(self::$_inscriptionData)
+            && (isset(self::$_inscriptionData['numpago']) && is_numeric(self::$_inscriptionData['numpago'])))
+         {
             if (self::$_inscriptionData['pagado'] == '1') {
                 return 'Ya has realizado la inscripción, tu número de '.
                     'inscripción es <strong>'.
@@ -421,18 +423,18 @@ class Nacional
             return false;
         }
         
-        if (is_numeric($_GET['pagado'])) {
+        if (isset($_GET['pagado']) && is_numeric($_GET['pagado'])) {
             self::$_db->query('UPDATE fnacional SET pagado=1 WHERE id = '.
                 $_GET['pagado']);
             return 'ID '.$_GET['pagado'].' marcado como pagado.';
-        } elseif (is_numeric($_GET['reenviar'])) {
+        } elseif (isset($_GET['reenviar']) && is_numeric($_GET['reenviar'])) {
             self::loadInscriptionData($_GET['reenviar']);
             if (self::sendConfirmationEmail()) {
                 return "Mensaje enviado a $emailTo";
             } else {
                 throw new Exception("Error al enviar mensaje a $emailTo");
             }
-        } elseif (is_numeric($_GET['edita'])) {
+        } elseif (isset($_GET['edita']) && is_numeric($_GET['edita'])) {
             return self::loadInscriptionData($_GET['edita']);
         } else {
             return false;
@@ -449,13 +451,13 @@ class Nacional
         }
         
         self::$_inscriptionData['nombre'] = 
-            self::removeNonLettersNumbersPunctuation($_POST['nombre']);
+            Montes\Strings::filter('NOT_LETTERS-NUMBERS-SPACE-PUNCTUATION', $_POST['nombre']);
         if (self::$_inscriptionData['nombre'] == '') {
             $errorMsg .= '<br />-Nombre';
         }
         
         self::$_inscriptionData['apellidos'] = 
-            self::removeNonLettersNumbersPunctuation($_POST['apellidos']);
+            Montes\Strings::filter('NOT_LETTERS-NUMBERS-SPACE-PUNCTUATION', $_POST['apellidos']);
         if (self::$_inscriptionData['apellidos'] == '') {
             $errorMsg .= '<br />-Apellidos';
         }
@@ -496,13 +498,13 @@ class Nacional
         }
         
         self::$_inscriptionData['pais'] = 
-            removeNonLettersNumbersPunctuation($_POST['pais']);
+            Montes\Strings::filter('NOT_LETTERS-NUMBERS-SPACE-PUNCTUATION', $_POST['pais']);
         if ($_POST['pais'] == '' || $_POST['pais'] == '999') {
             $errorMsg .= '<br />-País';
         }
         
         self::$_inscriptionData['provincia'] = 
-            removeNonLettersNumbersPunctuation($_POST['provincia']);
+        Montes\Strings::filter('NOT_LETTERS-NUMBERS-SPACE-PUNCTUATION', $_POST['provincia']);
         if ($_POST['provincia'] == '' || $_POST['provincia'] == '999') {
             $errorMsg .= '<br />-Provincia';
         }
@@ -538,7 +540,7 @@ class Nacional
         }
         
         self::$_inscriptionData['modelovehiculo'] = 
-            removeNonLettersNumbersPunctuation($_POST['modelovehiculo']);
+        Montes\Strings::filter('NOT_LETTERS-NUMBERS-SPACE-PUNCTUATION', $_POST['modelovehiculo']);
         if ($_POST['modelovehiculo'] == '') {
             $errorMsg .= '<br />-Modelo Vehículo';
         }
@@ -559,7 +561,7 @@ class Nacional
         }
         
         self::$_inscriptionData['comentarios'] = 
-            removeNonLettersNumbersPunctuation($_POST['comentarios']);
+            Montes\Strings::filter('NOT_LETTERS-NUMBERS-SPACE-PUNCTUATION', $_POST['comentarios']);
         
         self::$_inscriptionData['error'] = $errorMsg;
 
@@ -593,7 +595,7 @@ class Nacional
     private static function saveInscriptionData()
     {
         //if we are editing an inscription
-        if (self::$_moderator && is_numeric($_POST['editForm'])) {
+        if (self::$_moderator && isset($_POST['editForm']) && is_numeric($_POST['editForm'])) {
             self::$_userInfo['id'] = self::$_inscriptionData['idmember'];
             self::$_userInfo['name'] = $_POST['nick'];
             $newId = self::$_inscriptionData['numpago'];
@@ -668,8 +670,6 @@ class Nacional
                 real_escape_string(self::$_inscriptionData['correo']).'",
             comentarios = "'.self::$_db->
                 real_escape_string(self::$_inscriptionData['comentarios']).'",
-            localidad = "'.self::$_db->
-                real_escape_string(self::$_inscriptionData['localidad']).'",
             Cam_Extra_1 = "'.self::$_db->
                 real_escape_string(self::$_inscriptionData['Cam_Extra_1']).'",
             Cam_Extra_2 = "'.self::$_db->
@@ -684,7 +684,7 @@ class Nacional
                 real_escape_string(self::$_inscriptionData['Cam_Extra_6']).'" '.
             $sqlAction2);
         
-        if (!is_numeric($_POST['editForm'])) {
+        if (isset($_POST['editForm']) && !is_numeric($_POST['editForm'])) {
             self::sendConfirmationEmail();
         }
     }
@@ -694,7 +694,7 @@ class Nacional
         if (!self::$_moderator) {
             return false;
         }
-        
+
         self::$_config['firstDay'] = date('Y-m-d', 
             strtotime($_POST['firstDay']));
         self::$_config['inscriptionLimitDate'] = 
@@ -702,11 +702,13 @@ class Nacional
         self::$_config['maxInscriptions'] = 
             is_numeric($_POST['maxInscriptions']) ? 
             $_POST['maxInscriptions'] : '0';
-        self::$_config['extraTShirts'] = 
-            is_numeric($_POST['extraTShirts']) ? 
-            $_POST['extraTShirts'] : '0';
-        self::$_config['inscriptionsOpened'] = 
-            $_POST['inscriptionsOpened'] == '1' ? '1' : '0';
+        if (isset($_POST['extraTShirts']))
+            self::$_config['extraTShirts'] = 
+                is_numeric($_POST['extraTShirts']) ? 
+                    $_POST['extraTShirts'] : '0';
+        if (isset($_POST['inscriptionsOpened']))
+            self::$_config['inscriptionsOpened'] = 
+                $_POST['inscriptionsOpened'] == '1' ? '1' : '0';
         self::$_config['price'] = 
             is_numeric($_POST['price']) ? $_POST['price'] : '0';
         self::$_config['inSituPrice'] = 
@@ -715,6 +717,9 @@ class Nacional
         self::$_config['extraTShirtPrice'] = 
             is_numeric($_POST['extraTShirtPrice']) ? 
             $_POST['extraTShirtPrice'] : '0';
+        self::$_config['durationDays'] =
+            is_numeric($_POST['durationDays']) ? $_POST['durationDays'] : '0';
+
     }
     
     private static function saveConfig()
@@ -725,7 +730,7 @@ class Nacional
         ) {
             return false;
         }
-        
+
         self::$_db->query('
             UPDATE fnacional_config SET
             firstDay = "'.self::$_config['firstDay'].'",
@@ -737,7 +742,8 @@ class Nacional
             inSituPrice = "'.self::$_config['inSituPrice'].'",
             bankAccount = "'.self::$_db->
                 real_escape_string(self::$_config['bankAccount']).'",
-            extraTShirtPrice = "'.self::$_config['extraTShirtPrice'].'"
+            extraTShirtPrice = "'.self::$_config['extraTShirtPrice'].'",
+            durationDays = "'.self::$_config['durationDays'].'"
             WHERE id = 0
             LIMIT 1
             ');     
@@ -757,7 +763,11 @@ class Nacional
         $data['fllegada'] = date('d/m/Y', strtotime($data['fllegada'])); 
         $vars = compact('config', 'data');
         
-        $emailText = Haanga::Load('confirmation_email.html', $vars, true);      
+        ob_start(); # start buffer
+        include 'templates/confirmation_email.php';
+        $emailText = ob_get_contents();
+        ob_end_clean(); # end buffer
+
         $emailTo = $data['correo'];
         $emailSubject = 'Confirmacion inscripcion Concentracion '.
             'Nacional Furgovw '.self::$_year;
@@ -818,8 +828,8 @@ class Nacional
             if (self::$_inscriptionData['price'] == '0') { 
                 self::calcInscriptionPrice();
             }
-        } elseif (self::$_inscriptionData['error'] == '' 
-            && !is_numeric(self::$_inscriptionData['numpago'])
+        } elseif ((!isset(self::$_inscriptionData['error']) || self::$_inscriptionData['error'] == '') 
+            && (!isset(self::$_inscriptionData['numpago']) || !is_numeric(self::$_inscriptionData['numpago']))
         ) {
             self::$_inscriptionData = array();
             self::$_inscriptionData['nick']   = self::$_userInfo['name'];
@@ -877,11 +887,11 @@ class Nacional
         for ($i = 0; $i < 9; $i ++)
             $num[$i] = substr($cif, $i, 1);
         //si no tiene un formato valido devuelve error
-        if (!ereg('((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)'.
-            '|^[0-9]{8}[A-Z]{1}$)', $cif))
+        if (!preg_match('%((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)'.
+            '|^[0-9]{8}[A-Z]{1}$)%', $cif))
             return 0;
         //comprobacion de NIFs estandar
-        if (ereg('(^[0-9]{8}[A-Z]{1}$)', $cif))
+        if (preg_match('%(^[0-9]{8}[A-Z]{1}$)%', $cif))
             if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', 
                 substr($cif, 0, 8) % 23, 1))
                 return 1;
@@ -894,13 +904,13 @@ class Nacional
                 substr((2 * $num[$i]), 1, 1);
         $n = 10 - substr($suma, strlen($suma) - 1, 1);
         //comprobacion de NIFs especiales (se calculan como CIFs)
-        if (ereg('^[KLM]{1}', $cif))
+        if (preg_match('%^[KLM]{1}%', $cif))
             if ($num[8] == chr(64 + $n))
                 return 1;
             else
                 return -1;
         //comprobacion de CIFs
-        if (ereg('^[ABCDEFGHJNPQRSUVW]{1}', $cif))
+        if (preg_match('%^[ABCDEFGHJNPQRSUVW]{1}%', $cif))
             if ($num[8] == chr(64 + $n) || $num[8] == 
                 substr($n, strlen($n) - 1, 1))
                 return 2;
@@ -908,13 +918,13 @@ class Nacional
                 return -2;
         //comprobacion de NIEs
            //T
-        if (ereg('^[T]{1}', $cif))
-            if ($num[8] == ereg('^[T]{1}[A-Z0-9]{8}$', $cif))
+        if (preg_match('%^[T]{1}%', $cif))
+            if ($num[8] == preg_match('%^[T]{1}[A-Z0-9]{8}$%', $cif))
                 return 3;
             else
                 return -3;
            //XYZ
-           if (ereg('^[XYZ]{1}', $cif))
+           if (preg_match('%^[XYZ]{1}%', $cif))
             if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', 
                 substr(str_replace(array('X','Y','Z'),
                 array('0','1','2'), $cif), 0, 8) % 23, 1))
@@ -924,12 +934,5 @@ class Nacional
         //si todavia no se ha verificado devuelve error
         return 0;
     }
-
-    private static function removeNonLettersNumbersPunctuation()
-    {
-        return preg_replace("%[^\p{L}0-9\s\.\-,;\:\/¿?¡!\"']%u", 
-            "", self::$_string);
-    }
-
 
 }

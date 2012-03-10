@@ -6,23 +6,35 @@
  * and it's used in conjunction with:
  * 
  * SMF - Simple Machines Forum - http://www.simplemachines.org
- * Haanga Template System - http://www.haanga.org
- * 
- * (C) Javier Montes <javier@mooontes.com>
- * http://mooontes.com - Twitter: @mooontes
  * 
  * Inscription system working at: http://www.furgovw.org/nacional/
+ * 
+ * (C) Javier Montes <kalimocho@gmail.com> 
+ *
+ * Twitter: @mooontes
+ * Web: http://mooontes.com
+ * 
+ * "Furgovw Meeting Inscription System" is being written to be used in furgovw.org's 
+ * annual photo contest,
+ * 
+ * Here you can see more info about our contest: http://www.furgovw.org/calendario/
+ * 
+ * "Furgovw Meeting Inscription System" is licensed under GPL 2.0 
+ * http://www.gnu.org/licenses/gpl-2.0.html
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
  * 
  */
 
 require_once 'class_Nacional.php';
-
-// Load Haanga template system
-require_once 'Haanga.php';
-Haanga::configure(array(
-    'template_dir' => 'templates/',
-    'cache_dir' => 'templates_compiled/',
-));
+require_once 'Montes/Strings.php';
 
 /* 
 ** Init database
@@ -42,7 +54,7 @@ if (!Nacional::init($db, $user_info)) {
 }
 
 // Set page title
-if ($_GET['menu'] == 'apuntarse') {
+if (isset($_GET['menu']) && $_GET['menu'] == 'apuntarse') {
     $title = Nacional::getTitle();
 } else {
     $title = 'Concentración Nacional Furgovw';
@@ -50,34 +62,38 @@ if ($_GET['menu'] == 'apuntarse') {
 
 // Show page header
 $config = Nacional::getConfig();
-$config['menu2'] = $_GET['menu2'];
+
+if (isset($_GET['menu2']))
+    $config['menu2'] = $_GET['menu2'];
+else 
+    $config['menu2'] = '';
+
 $moderator = Nacional::getModerator();
 $year = date('Y');
-$vars = compact('moderator', 'year', 'title', 'config');
+
 if (!isset($_GET['ajax'])) {
-    Haanga::Load('header.html', $vars);
+    include 'templates/header.php';
 }
 
 if ((!isset($_GET['ajax']) 
-    && !is_numeric($_GET['edita'])) 
+    && !isset($_GET['edita'])) 
     && (!isset($_GET['menu']) 
     || ($_GET['menu'] == ''))
 ) {
-    Haanga::Load('index.html');
+    include 'templates/index.php';
 }
 
 // If the user is a moderator check if we must do any moderator task
 // or if he wants to see admin menu
 if ($moderator) {	
-    if ($_GET['ajax'] != '') {
+    if (isset($_GET['ajax']) && $_GET['ajax'] != '') {
         echo Nacional::ajax($_GET['ajax'], $_GET['op']);
         return;
     } else {		
         $msg = Nacional::doModeratorTasks();
         if ($msg !== false) {
-            $vars = compact('msg');
-            Haanga::Load('error.html', $vars);		
-        } elseif ($_GET['menu'] == 'admin') {
+            include 'templates/error.php';
+        } elseif (isset($_GET['menu']) && $_GET['menu'] == 'admin') {
             $config = Nacional::getConfig();
             $allInscriptionsArray = Nacional::getAllInscriptions();
             $tShirtStats = Nacional::getTshirtStats();
@@ -87,37 +103,36 @@ if ($moderator) {
             $paidSizes = $tShirtStats['paidSizes'];
             $notPaidSizes = $tShirtStats['notPaidSizes'];
             $paidInscriptions = $tShirtStats['paidInscriptions'];
-            $vars = compact('config', 'allInscriptionsArray', 
-                            'totalPaidTShirts', 'totalPaidExtraTShirts',
-                            'totalNotPaidTShirts', 'paidInscriptions',
-                            'paidSizes', 'notPaidSizes');
-            Haanga::Load('admin_index.html', $vars);
+
+            include('templates/admin_index.php');
             $msg = true;
         }
     }
 }
 
-if ($_GET['menu'] == 'historia') {
-    Haanga::Load('history.html');
-} elseif ($_GET['menu'] == 'estadisticas') {
+if (isset($_GET['menu']) && $_GET['menu'] == 'historia') {
+    include 'templates/history.php';
+} elseif (isset($_GET['menu']) && $_GET['menu'] == 'estadisticas') {
     $allInscriptionsArray = Nacional::getAllInscriptions();
     $statistics = Nacional::getStatistics();
-    $vars = compact('config', 'allInscriptionsArray', 'statistics');
-    Haanga::Load('stats.html', $vars);
-// Are we at the inscriptions menu?
-} elseif ($_GET['menu'] == 'apuntarse' || is_numeric($_GET['edita'])) {
-    $vars = compact('moderator', 'year', 'title');
-    Haanga::Load('inscriptions.html', $vars);
 
-    if ($_POST['nacionalForm'] == 'yes') {
+    if ($allInscriptionsArray && $statistics) {
+        include('templates/stats.php');
+    } 
+// Are we at the inscriptions menu?
+} elseif ((isset($_GET['menu']) && $_GET['menu'] == 'apuntarse') || (isset($_GET['edita']) && is_numeric($_GET['edita']))) {
+
+    include('templates/inscriptions.php');
+
+    if (isset($_POST['nacionalForm']) && $_POST['nacionalForm'] == 'yes') {
         Nacional::saveInscriptionDataFromPost();
     }
 
-    if (!is_numeric($_GET['edita'])) {
+    if (!isset($_GET['edita']) || !is_numeric($_GET['edita'])) {
         if (Nacional::getError() !== false) {
             $error = Nacional::getError();
-            $vars = compact('error');
-            Haanga::Load('error.html', $vars);
+            
+            include 'templates/error.php';
         }
     }
 
@@ -126,18 +141,18 @@ if ($_GET['menu'] == 'historia') {
 
     //Last checks before show inscription's form
     if (($config['inscriptionsOpened'] == '1' 
-        && (!is_numeric($data['numpago'])) 
+        && (!isset($data['numpago']) || !is_numeric($data['numpago']))
         && ($moderator || !isset($error)))
         ||
-        ($moderator && is_numeric($_GET['edita']))) {
+        ($moderator && isset($_GET['edita']) && is_numeric($_GET['edita']))) {
 
         $dates = array();		
         for ($cont = 0; $cont < 3; $cont++) {
             $dow = strftime('%A', strtotime($config['firstDay'].' +
                 '.$cont.' DAYS'));
 
-            $dates[($cont+1)]['show'] = $dow.' '.date('d/m/Y',
-                strtotime($config['firstDay'].' +'.$cont.' DAYS'));
+            $dates[($cont+1)]['show'] = strftime('%A %e de %B del %G', strtotime($config['firstDay'].' +'.$cont.' DAYS'));
+
             $dates[($cont+1)]['save']= date('Y-m-d', 
                 strtotime($config['firstDay'].' +'.$cont.' DAYS')); 
         }
@@ -163,15 +178,14 @@ if ($_GET['menu'] == 'historia') {
             }
         }
 
-        if (is_numeric($_GET['edita'])) {
+        if (isset($_GET['edita']) && is_numeric($_GET['edita'])) {
             $data['edita'] = $_GET['edita'];
         }
 
         $userInfo = $user_info;
         $tShirtSizes = Nacional::getTShirtsSizes();
-        $vars = compact('config', 'data', 'moderator', 'year', 'userInfo',
-            'dates', 'vehicleBrands', 'countries', 'counties', 'tShirtSizes');
-        Haanga::Load('form.html', $vars);
+
+        include('templates/form.php');
     }
 }
 
@@ -179,7 +193,7 @@ if ($_GET['menu'] == 'historia') {
 $db->query("UPDATE fnacional n JOIN smf_members m ".
     "ON n.idmember = m.id_member SET n.nick = m.real_name ");
 
-Haanga::Load('footer.html');
+include 'templates/footer.php';
 
 
 
