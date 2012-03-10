@@ -35,6 +35,7 @@
 
 require_once 'class_Nacional.php';
 require_once 'Montes/Strings.php';
+require_once 'Zend/Pdf.php';
 
 /* 
 ** Init database
@@ -92,6 +93,7 @@ if ($moderator) {
     } else {		
         $msg = Nacional::doModeratorTasks();
         if ($msg !== false) {
+            $error = $msg;
             include 'templates/error.php';
         } elseif (isset($_GET['menu']) && $_GET['menu'] == 'admin') {
             $config = Nacional::getConfig();

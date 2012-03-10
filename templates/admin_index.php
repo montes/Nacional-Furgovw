@@ -59,6 +59,9 @@
 				<div class='inscription'><?=$inscription['modelovehiculo']?></div>
 				<div class='inscription'><?=$inscription['anyovehiculo']?></div>
 				<div class='inscription'><?=$inscription['matriculavehiculo']?></div>
+				<div class='inscription'>
+					<a href="http://www.furgovw.org/nacional/entradas/<?php echo $year . '/' . $year . $inscription['id'] . $inscription['numpago'] . substr($inscription['nif'], 0, 6) . $inscription['idmember'] . '.pdf'; ?>">PDF</a>
+				</div>
 				<?php if ($inscription['comentarios']): ?>
 					<div style='clear:left;float:left;' class='inscription'><?=$inscription['comentarios']?></div>
 				<?php endif; ?>

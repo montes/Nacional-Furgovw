@@ -196,6 +196,7 @@ class Nacional
         $result = self::$_db->query('
             SELECT
             fnacional.id as id,
+            fnacional.idmember as idmember,
             fnacional.numpago as numpago,
             fnacional.nif as nif,
             fnacional.nombre as nombre,
@@ -426,6 +427,8 @@ class Nacional
         if (isset($_GET['pagado']) && is_numeric($_GET['pagado'])) {
             self::$_db->query('UPDATE fnacional SET pagado=1 WHERE id = '.
                 $_GET['pagado']);
+            self::sendPaidMail($_GET['pagado']);
+
             return 'ID '.$_GET['pagado'].' marcado como pagado.';
         } elseif (isset($_GET['reenviar']) && is_numeric($_GET['reenviar'])) {
             self::loadInscriptionData($_GET['reenviar']);
@@ -576,8 +579,10 @@ class Nacional
             case 'payment':
                 $result = self::$_db->query('SELECT pagado FROM fnacional '.
                     'WHERE id='.$value.' LIMIT 1');
+                
                 $obj = $result->fetch_object();
                 if ($obj->pagado == 0) {
+                    self::sendPaidMail($value);
                     $update = 'pagado = 1, pagado_en_plazo = NOW()';
                     $returnString = 'ok1';
                 } else {
@@ -591,7 +596,7 @@ class Nacional
                 break;
         }
     }
-    
+
     private static function saveInscriptionData()
     {
         //if we are editing an inscription
@@ -684,7 +689,7 @@ class Nacional
                 real_escape_string(self::$_inscriptionData['Cam_Extra_6']).'" '.
             $sqlAction2);
         
-        if (isset($_POST['editForm']) && !is_numeric($_POST['editForm'])) {
+        if (isset($_POST['nacionalForm']) && $_POST['nacionalForm'] == 'yes') {
             self::sendConfirmationEmail();
         }
     }
@@ -749,6 +754,39 @@ class Nacional
             ');     
     }
     
+    private static function sendPaidMail($inscriptionDatabaseID)
+    {
+        if (!is_array(self::$_userInfo) 
+            || self::$_userInfo['is_guest'] 
+            || !is_array(self::$_inscriptionData)
+        ) {
+            return false;
+        }
+
+        self::loadInscriptionData($inscriptionDatabaseID);
+
+        $config = self::$_config;
+        $data = self::$_inscriptionData;
+
+        $pdfFileName = $data['year'] . $data['id'] . $data['numpago'] . substr($data['nif'], 0, 6) . $data['idmember'] . '.pdf';
+        self::generatePDF('entradas/' . self::$_year . '/' . $pdfFileName);
+
+        $emailText = "\r\n\r\nHemos recibido correctamente el pago de tu inscripción a la Concentración Nacional Furgovw " . self::$_year . "
+
+            <br><br>\r\n\r\nYa puedes descargar tu entrada de http://www.furgovw.org/nacional/entradas/" . self::$_year . "/" . $pdfFileName . "
+
+            <br><br>\r\n\r\n RECUERDA QUE DEBES IMPRIMIRLA Y ENTREGARLA AL LLEGAR PARA PODER ACCEDER AL RECINTO
+
+            <br><br><br>\r\n\r\n\r\n¡Gracias por tu participación en la concentración! ¡nos vemos allí!";
+        $emailTo = $data['correo'];
+        $emailSubject = 'Tu Entrada Para La Concentracion '.
+            'Nacional Furgovw '.self::$_year;
+        $header = "Content-type: text/html; charset=utf-8\r\n";
+        $header .= "From: Furgovw <furgovw@gmail.com>\r\n";
+
+        return mail($emailTo, $emailSubject, $emailText, $header);
+    }
+
     private static function sendConfirmationEmail()
     {
         if (!is_array(self::$_userInfo) 
@@ -758,11 +796,11 @@ class Nacional
             return false;
         }
         
+        $year = self::$_year;
         $config = self::$_config;
         $data = self::$_inscriptionData;
         $data['fllegada'] = date('d/m/Y', strtotime($data['fllegada'])); 
-        $vars = compact('config', 'data');
-        
+
         ob_start(); # start buffer
         include 'templates/confirmation_email.php';
         $emailText = ob_get_contents();
@@ -866,6 +904,134 @@ class Nacional
             self::$_inscriptionData['price'] += 
                 self::$_config['extraTShirtPrice']; 
         }
+    }
+
+    public static function generatePDF($fileName)
+    {
+        $pdf = new Zend_Pdf();
+        $pdf->pages[] = new Zend_Pdf_Page(Zend_Pdf_Page::SIZE_A4);
+        $page = $pdf->pages[0];
+        $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
+
+        $page->setFont($font, 20);
+        $page->drawText(str_replace('Inscripción', '', self::$_title), 90, 810, 'UTF-8');
+
+        $page->setFont($font, 18);
+        $page->drawText('-entrada ' . str_pad(self::$_inscriptionData['numpago'], 3, "0", STR_PAD_LEFT) . '-', 238, 790, 'UTF-8');
+
+        $page->drawText('-nick ' . self::$_inscriptionData['nick'] . '-', 220, 770, 'UTF-8');
+
+        $image = Zend_Pdf_Image::imageWithPath('/var/www/furgovw/Themes/default/images/smflogof.png');
+        $page->drawImage($image, 125, 690, 460, 770);
+
+        $page->setFont($font, 12);
+        $ticketText = 'Esta entrada permite el acceso al recinto de la ' . trim(str_replace('Inscripción', '', self::$_title)) . 
+            ' al vehículo ';
+        $page->drawText($ticketText, 20, 670, 'UTF-8');
+
+        $ticketText = 'con matrícula ' . self::$_inscriptionData['matriculavehiculo'] . ' perteneciente a ' . self::$_inscriptionData['nombre'] . ' ' . self::$_inscriptionData['apellidos'] . '.';            
+        $page->drawText($ticketText, 20, 658, 'UTF-8');
+
+        $ticketText = 'El máximo de participantes por vehículo es 5 incluído el conductor (con un máximo de 4 adultos).';
+        $page->drawText($ticketText, 20, 644, 'UTF-8');
+
+        $ticketText = 'El importe de la entrada no es reembolsable salvo el único supuesto de cancelación del evento.';
+        $page->drawText($ticketText, 20, 632, 'UTF-8');
+
+        $ticketText = 'La concentración se llevará a cabo desde el ' . 
+            strftime('%A %e de %B del %G', strtotime(self::$_config['firstDay'])) . ' a las 15:00';            
+        $page->drawText($ticketText, 20, 620, 'UTF-8');
+
+        $ticketText = 'al ' . strftime('%A %e de %B del %G', strtotime(self::$_config['firstDay'] . ' +' . self::$_config['durationDays'] . ' days' )) . ' a las 18:00.';
+        $page->drawText($ticketText, 20, 608, 'UTF-8');
+
+        $ticketText = 'El acceso al recinto será de 09:00 a 00:00.';
+        $page->drawText($ticketText, 20, 596, 'UTF-8');
+
+        $ticketText = 'Se impedirá el acceso a personas no inscritas y a quienes manifiesten comportamientos susceptibles de';
+        $page->drawText($ticketText, 20, 575, 'UTF-8');
+
+        $ticketText = 'causar molestias a los participantes, o bien que dificulten el normal desarrollo de la actividad y a aquellos';
+        $page->drawText($ticketText, 20, 563, 'UTF-8');
+
+        $ticketText = 'que sean expulsados por incumplimiento de las normas de comportamiento y convivencia.';
+        $page->drawText($ticketText, 20, 551, 'UTF-8');
+
+        $ticketText = 'Los vehículos deberán tener ITV y seguro vigentes para poder acceder al recinto.';
+        $page->drawText($ticketText, 20, 539, 'UTF-8');
+
+        $page->setFont($font, 14);
+        $ticketText = '-NO SE PERMITE EL USO DE GENERADORES DE NINGÚN TIPO-';
+        $page->drawText($ticketText, 75, 515, 'UTF-8');
+
+        $page->setFont($font, 14);
+        $ticketText = '-NO SE PERMITE EL USO DE INSTRUMENTOS MUSICALES-';
+        $page->drawText($ticketText, 90, 495, 'UTF-8');
+
+        $page->setFont($font, 14);
+        $ticketText = '-NO SE PERMITE LA INSTALACIÓN DE TIENDAS DE CAMPAÑA-';
+        $page->drawText($ticketText, 80, 475, 'UTF-8');
+
+        $page->setFont($font, 10);
+        $ticketText = 'Gracias por ayudar a que todos disfrutemos de la kedada.';
+        $page->drawText($ticketText, 20, 450, 'UTF-8');
+
+        $page->setFont($font, 10);
+        $ticketText = 'Al llegar al recinto deberás entregar esta entrada en recepción para poder entrar.';
+        $page->drawText($ticketText, 20, 440, 'UTF-8');
+
+        $page->drawLine(10, 412, 585, 412);
+        $page->drawLine(10, 411, 585, 411);
+        $page->setFont($font, 10);
+        $ticketText = '----8<----8<----8<----8<----8<----8<----8<----8<----8<----8<----CORTAR-POR-AQUI----8<----8<----8<----8<----8<----8<----8<----8<--';
+        $page->drawText($ticketText, 20, 417, 'UTF-8');
+        $page->drawLine(10, 428, 585, 428);
+        $page->drawLine(10, 427, 585, 427);
+
+        $page->setFont($font, 16);
+        if (self::$_inscriptionData['Cam_Extra_2'] != '999')
+            $page->drawText('Vale para las camisetas de la ' . str_replace('Inscripción', '', self::$_title), 25, 340, 'UTF-8');
+        else
+            $page->drawText('Vale para la camiseta de la ' . str_replace('Inscripción', '', self::$_title), 35, 340, 'UTF-8');
+
+        $page->setFont($font, 18);
+        $page->drawText('-vale ' . str_pad(self::$_inscriptionData['numpago'], 3, "0", STR_PAD_LEFT) . '-', 245, 320, 'UTF-8');
+
+        $page->setFont($font, 18);
+        $page->drawText('-nick ' . self::$_inscriptionData['nick'] . '-', 220, 300, 'UTF-8');
+
+        $page->setFont($font, 10);
+        $ticketText = 'Este vale no tiene validez sin el correspondiente sello aplicado en recepción.';
+        $page->drawText($ticketText, 20, 285, 'UTF-8');
+
+        $page->setFont($font, 10);
+        $ticketText = 'Canjear en la tienda furgovw (ver horarios de apertura en recepción).';
+        $page->drawText($ticketText, 20, 275, 'UTF-8');
+
+        $tShirtsBought = array();
+        foreach (self::$_tShirtSizes as $size) {
+            for ($cont = 1; $cont <= 6; $cont++) {
+                if (self::$_inscriptionData['Cam_Extra_' . $cont] == $size) {
+                    if (isset($tShirtsBought[$size])) {
+                        $tShirtsBought[$size]++;
+                    } else {
+                        $tShirtsBought[$size] = 1;
+                    }
+                }
+            }
+        }
+
+        arsort($tShirtsBought);
+
+        $y = 230;
+        foreach ($tShirtsBought as $tshirt => $count) {
+            $page->setFont($font, 30);
+            $ticketText = $count . ' de ' . $tshirt;
+            $page->drawText($ticketText, 150, $y, 'UTF-8');
+            $y -= 30;
+        }
+
+        $pdf->save($fileName);
     }
     
     private static function validateCif($cif)

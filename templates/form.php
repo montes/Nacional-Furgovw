@@ -25,7 +25,7 @@ La fecha tope para la inscripción y pago es el <?php echo strftime('%A %e de %B
 <strong>SEGUNDA. PRECIO.</strong>  El importe de la inscripción anticipada es de <?php echo $config['price']; ?>€ por vehículo, 
 no siendo reembolsable salvo en el supuesto de anulación de la Concentración. Esta inscripción incluye un pack de bienvenida, 
 el acceso y participación en los actos, comida popular el día fijado por la organización, actividades y concursos que se realicen. 
-No se garantiza la inscripción directa durante la concentración. En todo caso, tendrá un precio de <?php echo $config['inSituPrice']; ?>€ y no se entregará  pack de bienvenida.
+No se garantiza la inscripción directa durante la concentración. En todo caso, tendrá un precio de <?php echo $config['inSituPrice']; ?>€ y no se entregará pack de bienvenida.
 <br /><br />
 <strong>TERCERA. ACCESO AL RECINTO.</strong> 
 La concentración se llevará a cabo desde el 
@@ -37,19 +37,19 @@ El acceso al recinto será desde las 09:00 a las 00:00.
 <br /><br />
 <strong>QUINTA. NORMAS DE COMPORTAMIENTO Y CONVIVENCIA.</strong><br />
 Los participantes deberán: <br />
-a.   Ocupar las zonas asignadas por los organizadores sin invadir las zonas destinadas a otros fines. No se permite la reserva de sitios a otros participantes. La colocación de vehículos se efectuará por orden estricto de llegada.<br />
-b.   Abstenerse de acceder al escenario o lugar de actuación dispuesto por la organización, salvo que esté previsto por el desarrollo del propio espectáculo.<br />
-c.   Cumplir los requisitos de acceso y de admisión establecidos, debiendo estar identificados con los distintivos  proporcionados por la organización.<br />
-d.   Cumplir las instrucciones y normas particulares establecidas por los organizadores para el desarrollo de la actividad, debiendo cumplir los requisitos y condiciones de seguridad y de respeto a los demás participantes. En particular, los asistentes deberán evitar cualquier acción que pudiera producir peligro o molestias, dificultar el desarrollo de la actividad o deteriorar las instalaciones o espacio abierto.<br />
-e.   Respetar los horarios de descanso, desde las 00:00 a las 08:00, no pudiendo realizar ninguna actividad molesta ni mover vehículos.<br />
-f.   No obstaculizar los accesos y vías de circulación que se establezcan para garantizar la movilidad de los vehículos y la rápida evacuación si las circunstancias lo exigen. En caso de ser requerido por la organización se deberán mover los vehículos si las circunstancias asi lo exigiesen.<br />
-g.   Respetar las actividades que se realicen.<br />
-h.   Respetar la prohibición de fumar en espacios cerrados y no arrojar colillas al suelo en los espacios abiertos.<br />
-i.   Mantener una actitud cívica, evitando comportamientos molestos o conductas violentas.<br />
-j.   Los perros deberán ir atados y provistos de cadena, collar y bozal pera los casos de animales potencialmente peligrosos o agresivos. No podrán acceder a los espacios cerrados de las instalaciones, debiendo recogerse los excrementos que generen.<br />
-k.   Las basuras deberán depositarse en los contenedores habilitados al efectos, debiendo mantener el espacio limpio de residuos.<br />
-l.   Se prohibe la utilización de cualquier instrumento musical así como cualquier fuente sonora que pueda producir molestias a los demás participantes.<br />
-m.  Se prohibe la realización de fuego a excepción de los sitios habilitados al efecto por la organización.<br />
+a. Ocupar las zonas asignadas por los organizadores sin invadir las zonas destinadas a otros fines. No se permite la reserva de sitios a otros participantes. La colocación de vehículos se efectuará por orden estricto de llegada.<br />
+b. Abstenerse de acceder al escenario o lugar de actuación dispuesto por la organización, salvo que esté previsto por el desarrollo del propio espectáculo.<br />
+c. Cumplir los requisitos de acceso y de admisión establecidos, debiendo estar identificados con los distintivos  proporcionados por la organización.<br />
+d. Cumplir las instrucciones y normas particulares establecidas por los organizadores para el desarrollo de la actividad, debiendo cumplir los requisitos y condiciones de seguridad y de respeto a los demás participantes. En particular, los asistentes deberán evitar cualquier acción que pudiera producir peligro o molestias, dificultar el desarrollo de la actividad o deteriorar las instalaciones o espacio abierto.<br />
+e. Respetar los horarios de descanso, desde las 00:00 a las 08:00, no pudiendo realizar ninguna actividad molesta ni mover vehículos.<br />
+f. No obstaculizar los accesos y vías de circulación que se establezcan para garantizar la movilidad de los vehículos y la rápida evacuación si las circunstancias lo exigen. En caso de ser requerido por la organización se deberán mover los vehículos si las circunstancias asi lo exigiesen.<br />
+g. Respetar las actividades que se realicen.<br />
+h. Respetar la prohibición de fumar en espacios cerrados y no arrojar colillas al suelo en los espacios abiertos.<br />
+i. Mantener una actitud cívica, evitando comportamientos molestos o conductas violentas.<br />
+j. Los perros deberán ir atados y provistos de cadena, collar y bozal pera los casos de animales potencialmente peligrosos o agresivos. No podrán acceder a los espacios cerrados de las instalaciones, debiendo recogerse los excrementos que generen.<br />
+k. Las basuras deberán depositarse en los contenedores habilitados al efectos, debiendo mantener el espacio limpio de residuos.<br />
+l. Se prohibe la utilización de cualquier instrumento musical así como cualquier fuente sonora que pueda producir molestias a los demás participantes.<br />
+m. Se prohibe la realización de fuego a excepción de los sitios habilitados al efecto por la organización.<br />
 n. Se prohibe la  instalación de tiendas de campaña. Se permitirá el uso de toldos si las circunstancias lo permiten.<br />
 <br />
 NOTA DE LA ORGANIZACIÓN:<br />

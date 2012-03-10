@@ -1,5 +1,5 @@
 
-<br>Hemos recibido tu inscripción en la Concentración Nacional Furgovw <?=$data['year']?>.<br><br><br>
+<br>Hemos recibido tu inscripción en la Concentración Nacional Furgovw <?=$year?>.<br><br><br>
 
 
 <h1 style='font-size:18px;font-weight:bold;'>TU NÚMERO DE INSCRIPCIÓN ES: <?=$data['numpago']?><br><br>
@@ -29,7 +29,7 @@ CLUB CAMPER FURGOVW<br><br>
 <br>País: <?=$data['pais']?>
 <br>Provincia: <?=$data['provincia']?>
 
-<?php if ($data['Cam_Extra_1' != '999']): ?>
+<?php if ($data['Cam_Extra_1'] != '999'): ?>
 	<br><br>Has escogido la talla <?=$data['Cam_Extra_1']?> para la camiseta gratuita que te corresponde con la inscripción. 
 <?php endif; ?>
 
