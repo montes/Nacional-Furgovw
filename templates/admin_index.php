@@ -59,9 +59,11 @@
 				<div class='inscription'><?=$inscription['modelovehiculo']?></div>
 				<div class='inscription'><?=$inscription['anyovehiculo']?></div>
 				<div class='inscription'><?=$inscription['matriculavehiculo']?></div>
-				<div class='inscription'>
-					<a href="http://www.furgovw.org/nacional/entradas/<?php echo $year . '/' . $year . $inscription['id'] . $inscription['numpago'] . substr($inscription['nif'], 0, 6) . $inscription['idmember'] . '.pdf'; ?>">PDF</a>
-				</div>
+				<?php if ($inscription['pagado'] == '1'): ?>
+					<div class='inscription'>
+						<a href="http://www.furgovw.org/nacional/entradas/<?php echo $year . '/' . $year . $inscription['id'] . $inscription['numpago'] . substr($inscription['nif'], 0, 6) . $inscription['idmember'] . '.pdf'; ?>">PDF</a>
+					</div>
+				<?php endif; ?>
 				<?php if ($inscription['comentarios']): ?>
 					<div style='clear:left;float:left;' class='inscription'><?=$inscription['comentarios']?></div>
 				<?php endif; ?>
@@ -85,11 +87,12 @@
 					<div class='inscription'><?=$inscription['Cam_Extra_6']?></div>
 				<?php endif; ?>
 				<div style='clear:left;float:left;<?php if ($inscription['pagado'] == '1'): ?>background-color:green;<?php endif; ?>' class='inscription' id='priceInscription<?=$inscription['id']?>'><?=$inscription['price']?>€ 
-					<?php if ($inscription['pagado'] == '0'): ?>
+<!--					<?php if ($inscription['pagado'] == '0'): ?>
 						<a href='#' onclick='return checkPayment(<?=$inscription['id']?>);'>Marcar pagado</a>
 					<?php else: ?>
 						<a href='#' onclick='return checkPayment(<?=$inscription['id']?>);'>Marcar NO pagado</a>
 					<?php endif; ?>
+-->
 				</div>
 			</div>
 		<?php endforeach; ?>

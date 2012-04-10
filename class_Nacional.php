@@ -396,13 +396,13 @@ class Nacional
             && (isset(self::$_inscriptionData['numpago']) && is_numeric(self::$_inscriptionData['numpago'])))
          {
             if (self::$_inscriptionData['pagado'] == '1') {
-                return 'Ya has realizado la inscripción, tu número de '.
+                return 'Has realizado la inscripción, tu número de '.
                     'inscripción es <strong>'.
                     self::$_inscriptionData['numpago'].
                     '</strong><br /><br />Tu pago ha sido confirmado.';
             } else {
-                return 'Ya has realizado la inscripción, tu número de '.
-                    'inscripción es <strong>'.
+                return 'Ya has realizado la preinscripción, tu número de '.
+                    'preinscripción es <strong>'.
                     self::$_inscriptionData['numpago'].
                     '</strong><br /><br />Debes ingresar '.
                     self::$_inscriptionData['price'].'€ en la cuenta del '.
@@ -796,10 +796,12 @@ class Nacional
             return false;
         }
         
-        $year = self::$_year;
-        $config = self::$_config;
-        $data = self::$_inscriptionData;
-        $data['fllegada'] = date('d/m/Y', strtotime($data['fllegada'])); 
+        $extraTShirtPrice   = self::$_config['extraTShirtPrice'];
+        $nick               = self::$_userInfo['name'];
+        $year               = self::$_year;
+        $config             = self::$_config;
+        $data               = self::$_inscriptionData;
+        $data['fllegada']   = date('d/m/Y', strtotime($data['fllegada'])); 
 
         ob_start(); # start buffer
         include 'templates/confirmation_email.php';
@@ -807,8 +809,8 @@ class Nacional
         ob_end_clean(); # end buffer
 
         $emailTo = $data['correo'];
-        $emailSubject = 'Confirmacion inscripcion Concentracion '.
-            'Nacional Furgovw '.self::$_year;
+        $emailSubject = 'IMPORTANTE - SOLICITUD DE INSCRIPCION PARA LA CONCENTRACION '.
+            'NACIONAL FURGOVW '.self::$_year.' - IMPORTANTE';
         $header = "Content-type: text/html; charset=utf-8\r\n";
         $header .= "From: Furgovw <furgovw@gmail.com>\r\n";
         
