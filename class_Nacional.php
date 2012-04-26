@@ -515,7 +515,7 @@ class Nacional
         self::$_inscriptionData['Cam_Extra_1'] = 
             filter_var($_POST['Cam_Extra_1'], FILTER_SANITIZE_STRING, 
             FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-        if ($_POST['Cam_Extra_1'] == '') {
+        if ($_POST['Cam_Extra_1'] == '999') {
             $errorMsg .= '<br />-Camiseta';
         }
         
